@@ -12,7 +12,23 @@ const UserSchema = {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique:true,
+    unique: true,
+  },
+  fullName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    field: 'full_name',
+  },
+  phone: {
+    type: DataTypes.STRING,
+  },
+  birthDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  sex: {
+    type: DataTypes.STRING,
   },
   email: {
     allowNull: false,
@@ -60,7 +76,3 @@ class User extends Model {
 }
 
 module.exports = { USER_TABLE, UserSchema, User };
-
-
-
-

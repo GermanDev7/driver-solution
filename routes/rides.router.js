@@ -12,6 +12,5 @@ router.get('/', (req, res, next) => {
   res.json('rides');
 });
 
-r
 
 module.exports = router;
