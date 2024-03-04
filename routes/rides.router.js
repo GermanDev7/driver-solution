@@ -1,16 +1,12 @@
 const express = require('express');
-
-//const UserService=require
-//validatorHandler
-//const {updateUserSchema,createUser}
-
+const rideController = require('../controllers/ride.controller');
 const router = express.Router();
-//const service=new UserService()
 
 //list rides
-router.get('/', (req, res, next) => {
-  res.json('rides');
-});
-
+router.get('/', rideController.findAllRides);
+router.get('/:id', rideController.findRideById);
+//create ride
+router.post('/', rideController.createRide);
+router.post('/endRide', rideController.endRide);
 
 module.exports = router;

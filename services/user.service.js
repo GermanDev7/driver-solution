@@ -1,16 +1,40 @@
+const boom = require('@hapi/boom');
+const { models } = require('./../libs/sequelize');
+
 class UserService {
   constructor() {}
 
-  async create(data) {}
+  async find() {
+    const rta = await models.User.findAll({
+      include: [
+        { model: models.Driver, as: 'driver' },
+        { model: models.Rider, as: 'rider' },
+      ],
+      attributes: { exclude: ['password'] }
+    });
+    return rta;
+  }
 
-  async find(data) {}
+  async findByEmail(email) {
+    const rta = await models.User.findOne({
+      where: { email },
+    });
+    return rta;
+  }
 
-  async fyndByEmail(email) {}
-
-  async findOne(id) {}
-
-  async delete(id) {}
-
+  async findOne(id) {
+    const user = await models.User.findByPk(id, {
+      include: [
+        { model: models.Driver, as: 'driver' },
+        { model: models.Rider, as: 'rider' },
+      ],
+      attributes: { exclude: ['password'] }
+    });
+    if (!user) {
+      throw boom.notFound('user not found');
+    }
+    return user;
+  }
 }
 
 module.exports = UserService;

@@ -1,36 +1,23 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
-const { USER_TABLE } = require('./user.model');
 
-const DRIVER_TABLE = 'drivers';
+const PAYMENT_TABLE = 'payments';
 
-const DriverSchema = {
+const PaymentSchema = {
   id: {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
     type: DataTypes.INTEGER,
   },
-  licenseNumber: {
+  amount: {
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+  },
+  status: {
     type: DataTypes.STRING,
-    field: 'license_number',
-    unique: true,
-  },
-
-  rating: {
-    type: DataTypes.DOUBLE,
-  },
-  rideCounts: {
-    field: 'ride_counts',
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
-  },
-  isAvailable: {
     allowNull: false,
-    field: 'is_available',
-    type: DataTypes.BOOLEAN,
   },
-  CreatedAt: {
+   CreatedAt: {
     allowNull: false,
     type: DataTypes.DATE,
     field: 'created_at',
@@ -43,31 +30,47 @@ const DriverSchema = {
     defaultValue: Sequelize.NOW,
   },
   userId: {
-    field: 'user_id',
-    allowNull: false,
     type: DataTypes.INTEGER,
-    unique: true,
-    references: { model: USER_TABLE, key: 'id' },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
+    allowNull: false,
+    field: 'user_id',
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+  RideId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    field: 'ride_id',
+    references: {
+      model: 'rides',
+      key: 'id',
+    },
   },
 };
-
-class Driver extends Model {
+class Payment extends Model {
   static associate(models) {
+    this.belongsTo(models.Ride, {
+      foreignKey: 'rideId',
+      as: 'ride'
+    });
     this.belongsTo(models.User, {
       foreignKey: 'userId',
       as: 'user'
+    });
+    this.hasOne(models.Transaction, {
+      foreignKey: 'paymentId',
+      as: 'transaction'
     });
   }
   static config(sequelize) {
     return {
       sequelize,
-      tableName: DRIVER_TABLE,
-      modelName: 'Driver',
+      tableName: PAYMENT_TABLE,
+      modelName: 'Payment',
       timestamps: false,
     };
   }
 }
 
-module.exports = { DRIVER_TABLE, DriverSchema, Driver };
+module.exports = { PAYMENT_TABLE, PaymentSchema, Payment };

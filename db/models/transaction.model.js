@@ -11,15 +11,17 @@ const TransactionSchema = {
     primaryKey: true,
     type: DataTypes.INTEGER,
   },
-  amount: {
-    type: DataTypes.STRING,
-    field: 'preferred_payment_method',
-  },
-  status: {
+
+  payMethod: {
+    field: 'pay_method',
     type: DataTypes.STRING,
   },
   payReference: {
-    field:'pay_reference',
+    field: 'pay_reference',
+    type: DataTypes.STRING,
+  },
+
+  status: {
     type: DataTypes.STRING,
   },
 
@@ -35,21 +37,12 @@ const TransactionSchema = {
     field: 'updated_at',
     defaultValue: Sequelize.NOW,
   },
-  rideId: {
-    field: 'ride_id',
+  paymentId: {
+    field: 'payment_id',
     allowNull: false,
     type: DataTypes.INTEGER,
     unique: true,
-    references: { model: RIDE_TABLE, key: 'id' },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  },
-  riderId: {
-    field: 'rider_id',
-    allowNull: false,
-    type: DataTypes.INTEGER,
-    unique: true,
-    references: { model: RIDER_TABLE, key: 'id' },
+    references: { model: 'payments', key: 'id' },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   },
@@ -57,13 +50,9 @@ const TransactionSchema = {
 
 class Transaction extends Model {
   static associate(models) {
-    this.belongsTo(models.Ride, {
-      foreignKey: 'rideId',
-      as: 'ride'
-    });
-    this.belongsTo(models.Rider, {
-      foreignKey: 'riderId',
-      as: 'rider'
+    this.belongsTo(models.Payment, {
+      as: 'payment',
+      foreignKey: 'paymentId',
     });
   }
   static config(sequelize) {
@@ -77,4 +66,3 @@ class Transaction extends Model {
 }
 
 module.exports = { TRANSACTION_TABLE, TransactionSchema, Transaction };
-

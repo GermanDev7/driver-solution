@@ -1,10 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const routerApi = require('./routes');
-const {config}= require('./config/config')
+const {
+  logError,
+  errorHandler,
+  boomErrorHandler,
+  ormErrorHandler,
+} = require('./middlewares/error.handler');
+const { checkApiKey } = require('./middlewares/auth.handler');
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); //utilizar el middleware para las solicitudes json (Post,Put)
 
 const whitelist = ['http://localhost:8080', 'https://myapp.co'];
 const options = {
@@ -18,19 +24,21 @@ const options = {
 };
 app.use(cors(options));
 
-//require('./utils/auth');
+require('./utils/auth');
+const port = 3000;
 
-const port = 3000||config.port;
-
-app.get('/', (req, re) => {
-  res.send('Hola nueva app');
+app.get('/', checkApiKey, (req, res) => {
+  res.send('Hello word');
 });
 
-//router
+
 
 routerApi(app);
-//middlewares
+app.use(logError);
+app.use(ormErrorHandler);
+app.use(boomErrorHandler);
+app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log('Corriendo en el puerto', port);
+  console.log('Corriendo en el puerto ' + port);
 });

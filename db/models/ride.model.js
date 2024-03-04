@@ -1,6 +1,7 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 const { RIDER_TABLE } = require('./rider.model');
 const { DRIVER_TABLE } = require('./driver.model');
+const { PAYMENT_TABLE } = require('./payment.model');
 const RIDE_TABLE = 'rides';
 
 const RideSchema = {
@@ -13,32 +14,41 @@ const RideSchema = {
   startLat: {
     type: DataTypes.DOUBLE,
     field: 'start_lat',
+    allowNull: false,
   },
   startLong: {
     type: DataTypes.DOUBLE,
     field: 'start_long',
+    allowNull: false,
   },
   endLat: {
     type: DataTypes.DOUBLE,
     field: 'end_lat',
+    allowNull: false,
   },
   endLong: {
     type: DataTypes.DOUBLE,
     field: 'end_long',
+    allowNull: false,
   },
   startTime: {
-    type: DataTypes.TIME,
+    type: DataTypes.DATE,
     field: 'start_time',
+    allowNull: false,
   },
   endTime: {
-    type: DataTypes.TIME,
+    type: DataTypes.DATE,
     field: 'end_time',
+
   },
   distance: {
     type: DataTypes.DOUBLE,
+    allowNull: false,
+
   },
   status: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -55,7 +65,7 @@ const RideSchema = {
     allowNull: false,
     field: 'rider_id',
     references: {
-      model: RIDER_TABLE, // Nombre del modelo 'Rider' definido en Sequelize
+      model: RIDER_TABLE,
       key: 'id',
     },
   },
@@ -64,10 +74,11 @@ const RideSchema = {
     allowNull: false,
     field: 'driver_id',
     references: {
-      model: DRIVER_TABLE, // Nombre del modelo 'Driver' definido en Sequelize
+      model: DRIVER_TABLE,
       key: 'id',
     },
   },
+
 };
 
 class Ride extends Model {
@@ -76,9 +87,13 @@ class Ride extends Model {
       foreignKey: 'riderId',
       as: 'rider'
     });
-    this.belongsTo(models.Rider, {
+    this.belongsTo(models.Driver, {
       foreignKey: 'driverId',
       as: 'driver'
+    });
+    this.hasOne(models.Payment, {
+      foreignKey: 'rideId',
+      as: 'payment'
     });
   }
   static config(sequelize) {

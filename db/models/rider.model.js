@@ -22,9 +22,9 @@ const RiderSchema = {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
-  isAvaible: {
+  isAvailable: {
     allowNull: false,
-    field: 'is_avaible',
+    field: 'is_available',
     type: DataTypes.BOOLEAN,
   },
 

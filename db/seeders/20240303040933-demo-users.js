@@ -37,7 +37,7 @@ module.exports = {
         preferred_payment_method:'TC',
         rating:0,
         ride_counts:0,
-        is_avaible:true,
+        is_available:true,
         created_at: new Date(),
         updated_at: new Date(),
       });
@@ -47,7 +47,7 @@ module.exports = {
         license_number:faker.commerce.isbn(10),
         rating:0,
         ride_counts:0,
-        is_avaible:true,
+        is_available:true,
         created_at: new Date(),
         updated_at: new Date(),
       });

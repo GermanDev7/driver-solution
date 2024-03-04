@@ -64,6 +64,10 @@ class User extends Model {
       as: 'driver',
       foreignKey: 'userId',
     });
+    this.hasOne(models.Payment, {
+      as: 'payment',
+      foreignKey: 'userId',
+    });
   }
   static config(sequelize) {
     return {
@@ -71,6 +75,9 @@ class User extends Model {
       tableName: USER_TABLE,
       modelName: 'User',
       timestamps: false,
+      defaultScope: {
+        attributes: ['id', 'username', 'email', 'phone','password','full_name'],
+      },
     };
   }
 }
