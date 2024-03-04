@@ -4,6 +4,8 @@ const sequelize = require('../libs/sequelize');
 const { Op } = require('@sequelize/core');
 const paymentProvider = require('./paymentsProvider');
 
+
+
 class RideService {
   constructor() {}
   async find() {
@@ -11,6 +13,7 @@ class RideService {
       include: [
         { model: models.Rider, as: 'rider' },
         { model: models.Driver, as: 'driver' },
+        { model: models.Payment, as: 'payment' },
       ],
     });
     return rta;
@@ -24,7 +27,7 @@ class RideService {
       ],
     });
     if (!ride) {
-      throw boom.notFound('ride not found');
+      throw boom.badRequest('ride not found');
     }
     return ride;
   }
@@ -33,11 +36,26 @@ class RideService {
     // search driver
     const t = await sequelize.transaction();
     try {
+      const rider = await models.Rider.findOne(
+        { isAvailable: false },
+        {
+          where: {
+            [Op.and]: {
+              id: data.riderId,
+              isAvailable: true,
+            },
+          },
+        }
+      );
+
+      if (!rider) {
+        throw new Error('Rider is not available.');
+      }
       const availableDriver = await models.Driver.findOne({
         where: { isAvailable: true },
       });
       if (!availableDriver) {
-        throw new Error('No hay conductores disponibles en este momento.');
+        throw new Error('Drivers are not available.');
       }
       data.driverId = availableDriver.id;
       data.startTime = new Date();
@@ -59,13 +77,8 @@ class RideService {
         }
       );
 
-      const updateRider = await models.Rider.update(
-        { isAvailable: false },
-        {
-          where: { id: data.riderId },
-          transaction: t,
-        }
-      );
+      rider.isAvailable = false;
+      rider.save({ transaction: t });
 
       const newRide = await models.Ride.create(data, { transaction: t });
 
@@ -88,6 +101,10 @@ class RideService {
           {
             model: models.Rider,
             as: 'rider',
+          },
+          {
+            model: models.Driver,
+            as: 'driver',
           },
         ],
         where: {
@@ -125,12 +142,12 @@ class RideService {
       );
       await ride.save({ transaction: t });
       //calculate fare
-
       const fare = this.constructor.calculateFare(
         ride.distance,
         ride.startTime,
         ride.endTime
       );
+
       const payment = await models.Payment.create(
         {
           userId: ride.rider.userId,

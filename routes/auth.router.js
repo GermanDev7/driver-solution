@@ -11,7 +11,8 @@ router.post(
   async (req, res, next) => {
     try {
       const user = req.user;
-      const role = '';
+
+      let role = '';
       if (user.driver) {
         role += 'driver,';
       }
@@ -22,8 +23,8 @@ router.post(
 
       const payload = {
         sub: user.id,
-        username: user.username,
-        role: user.role,
+        role: role,
+        user: user,
       };
       const token = jwt.sign(payload, config.jwtSecret);
       res.json({ user, token });
@@ -34,8 +35,3 @@ router.post(
 );
 
 module.exports = router;
-
-
-
-
-

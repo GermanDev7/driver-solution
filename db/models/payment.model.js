@@ -38,7 +38,7 @@ const PaymentSchema = {
       key: 'id',
     },
   },
-  RideId: {
+  rideId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     field: 'ride_id',

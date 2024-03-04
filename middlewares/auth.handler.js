@@ -9,22 +9,12 @@ function checkApiKey(req, res, next) {
     next(boom.unauthorized());
   }
 }
-function checkAdminRoles(req, res, next) {
-  const user = req.user;
-  if (user.role === 'admin') {
-    next();
-  } else {
-    next(boom.unauthorized());
-  }
-}
-//funcion dinamica para hacer la parte de los roles
+//checkRoles
 function checkRoles(...roles) {
-  console.log(roles);
   return (req, res, next) => {
     const user = req.user;
-    console.log(user);
-    //const roles=['admin','seller']
-    if (roles.includes(user.role)) {
+    const roleP = user.role.replace(',', '');
+    if (roles.includes(roleP)) {
       next();
     } else {
       next(boom.unauthorized());
@@ -32,4 +22,4 @@ function checkRoles(...roles) {
   };
 }
 
-module.exports = { checkApiKey, checkAdminRoles, checkRoles };
+module.exports = { checkApiKey, checkRoles };

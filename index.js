@@ -27,8 +27,8 @@ app.use(cors(options));
 require('./utils/auth');
 const port = 3000;
 
-app.get('/', checkApiKey, (req, res) => {
-  res.send('Hello word');
+app.get('/', (req, res) => {
+  res.send('Driver solution');
 });
 
 

@@ -10,7 +10,7 @@ class UserService {
         { model: models.Driver, as: 'driver' },
         { model: models.Rider, as: 'rider' },
       ],
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password'] },
     });
     return rta;
   }
@@ -18,6 +18,10 @@ class UserService {
   async findByEmail(email) {
     const rta = await models.User.findOne({
       where: { email },
+      include: [
+        { model: models.Rider, as: 'rider' },
+        { model: models.Driver, as: 'driver' },
+      ],
     });
     return rta;
   }
@@ -28,7 +32,7 @@ class UserService {
         { model: models.Driver, as: 'driver' },
         { model: models.Rider, as: 'rider' },
       ],
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password'] },
     });
     if (!user) {
       throw boom.notFound('user not found');
